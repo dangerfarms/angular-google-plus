@@ -116,12 +116,15 @@ angular.module('googleplus', []).
       };
 
       NgGooglePlus.prototype.checkAuth = function() {
-        gapi.auth.authorize({
+        var authorizeOptions = {
           client_id: options.clientId,
           scope: options.scopes,
-          response_type: options.responseType,
           immediate: true
-        }, this.handleAuthResult);
+        };
+        if (options.responseType !== null) {
+          authorizeOptions.response_type = options.responseType;
+        }
+        gapi.auth.authorize(authorizeOptions, this.handleAuthResult);
       };
 
       NgGooglePlus.prototype.handleClientLoad = function () {
