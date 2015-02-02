@@ -10,9 +10,9 @@ var options = {};
  */
 angular.module('googleplus', []).
 
-  /**
-   * GooglePlus provider
-   */
+/**
+ * GooglePlus provider
+ */
   provider('GooglePlus', [function() {
 
     /**
@@ -62,6 +62,22 @@ angular.module('googleplus', []).
     };
 
     /**
+     * Response type
+     * @default null
+     * @type {String}
+     */
+    options.responseType = null;
+
+    this.setResponseType = function(responseType) {
+      options.responseType = responseType;
+      return this;
+    };
+
+    this.getResponseType = function() {
+      return options.responseType;
+    };
+
+    /**
      * Init Google Plus API
      */
     this.init = function(customOptions) {
@@ -87,11 +103,15 @@ angular.module('googleplus', []).
 
       NgGooglePlus.prototype.login =  function () {
         deferred  = $q.defer();
-        gapi.auth.authorize({
+        var authorizeOptions = {
           client_id: options.clientId,
           scope: options.scopes,
           immediate: false
-        }, this.handleAuthResult);
+        };
+        if (options.responseType !== null) {
+          authorizeOptions.response_type = options.responseType;
+        }
+        gapi.auth.authorize(authorizeOptions, this.handleAuthResult);
         return deferred.promise;
       };
 
@@ -99,6 +119,7 @@ angular.module('googleplus', []).
         gapi.auth.authorize({
           client_id: options.clientId,
           scope: options.scopes,
+          response_type: options.responseType,
           immediate: true
         }, this.handleAuthResult);
       };
@@ -110,25 +131,25 @@ angular.module('googleplus', []).
       };
 
       NgGooglePlus.prototype.handleAuthResult = function(authResult) {
-          if (authResult && !authResult.error) {
-            deferred.resolve(authResult);
-            $rootScope.$apply();
-          } else {
-            deferred.reject('error');
-          }
+        if (authResult && !authResult.error) {
+          deferred.resolve(authResult);
+          $rootScope.$apply();
+        } else {
+          deferred.reject('error');
+        }
       };
 
       NgGooglePlus.prototype.getUser = function() {
-          var deferred = $q.defer();
+        var deferred = $q.defer();
 
-          gapi.client.load('oauth2', 'v2', function () {
-            gapi.client.oauth2.userinfo.get().execute(function (resp) {
-              deferred.resolve(resp);
-              $rootScope.$apply();
-            });
+        gapi.client.load('oauth2', 'v2', function () {
+          gapi.client.oauth2.userinfo.get().execute(function (resp) {
+            deferred.resolve(resp);
+            $rootScope.$apply();
           });
+        });
 
-          return deferred.promise;
+        return deferred.promise;
       };
 
       NgGooglePlus.prototype.getToken = function() {
@@ -146,14 +167,14 @@ angular.module('googleplus', []).
 
       return new NgGooglePlus();
     }];
-}])
+  }])
 
 // Initialization of module
-.run([function() {
-  var po = document.createElement('script');
-  po.type = 'text/javascript';
-  po.async = true;
-  po.src = 'https://apis.google.com/js/client.js';
-  var s = document.getElementsByTagName('script')[0];
-  s.parentNode.insertBefore(po, s);
-}]);
+  .run([function() {
+    var po = document.createElement('script');
+    po.type = 'text/javascript';
+    po.async = true;
+    po.src = 'https://apis.google.com/js/client.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(po, s);
+  }]);

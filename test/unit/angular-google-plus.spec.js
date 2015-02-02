@@ -30,14 +30,20 @@ describe('googlePlus Module specs', function () {
   describe('the provider api should provide', function () {
 
     it("a working login", inject(function ($q) {
-
-      expect(googlePlus.login().then).toEqual(jasmine.any(Function));
-
-      expect(window.gapi.auth.authorize).toHaveBeenCalledWith({
+      var responseType = GooglePlusProvider.getResponseType(),
+        options = {
           client_id: GooglePlusProvider.getClientId(),
           scope: GooglePlusProvider.getScopes(),
           immediate: false
-        }, googlePlus.handleAuthResult);
+        };
+
+      if (responseType !== null) {
+        options.response_type = responseType;
+      }
+
+      expect(googlePlus.login().then).toEqual(jasmine.any(Function));
+
+      expect(window.gapi.auth.authorize).toHaveBeenCalledWith(options, googlePlus.handleAuthResult);
     }));
 
     it("a working logout", inject(function ($q) {
@@ -72,5 +78,15 @@ describe('googlePlus Module specs', function () {
       GooglePlusProvider.setScopes('https://www.googleapis.com/auth/plus.me');
       expect(GooglePlusProvider.getScopes()).toBe('https://www.googleapis.com/auth/plus.me');
     });
+
+    it('requestType as default value', function () {
+      expect(GooglePlusProvider.getResponseType()).toBe(null);
+    });
+
+    it('working getter / setter for request type', function () {
+      GooglePlusProvider.setResponseType('code');
+      expect(GooglePlusProvider.getResponseType()).toBe('code');
+    });
+
   });
 });

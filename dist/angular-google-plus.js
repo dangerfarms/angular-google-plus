@@ -1,4 +1,4 @@
-/*! angular-google-plus - v0.1.2 2014-11-21 */
+/*! angular-google-plus - v0.1.2 2015-02-02 */
 /**
  * Options object available for module
  * options/services definition.
@@ -48,6 +48,19 @@ angular.module("googleplus", []).provider("GooglePlus", [ function() {
         return options.scopes;
     };
     /**
+     * Response type
+     * @default null
+     * @type {String}
+     */
+    options.responseType = null;
+    this.setResponseType = function(a) {
+        options.responseType = a;
+        return this;
+    };
+    this.getResponseType = function() {
+        return options.responseType;
+    };
+    /**
      * Init Google Plus API
      */
     this.init = function(a) {
@@ -72,6 +85,7 @@ angular.module("googleplus", []).provider("GooglePlus", [ function() {
             gapi.auth.authorize({
                 client_id: options.clientId,
                 scope: options.scopes,
+                response_type: options.responseType,
                 immediate: false
             }, this.handleAuthResult);
             return d.promise;
@@ -80,6 +94,7 @@ angular.module("googleplus", []).provider("GooglePlus", [ function() {
             gapi.auth.authorize({
                 client_id: options.clientId,
                 scope: options.scopes,
+                response_type: options.responseType,
                 immediate: true
             }, this.handleAuthResult);
         };
