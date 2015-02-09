@@ -1,4 +1,4 @@
-/*! angular-google-plus - v0.1.2 2015-02-02 */
+/*! angular-google-plus - v0.1.2 2015-02-09 */
 /**
  * Options object available for module
  * options/services definition.
@@ -61,6 +61,19 @@ angular.module("googleplus", []).provider("GooglePlus", [ function() {
         return options.responseType;
     };
     /**
+     * Redirect URI
+     * @default null
+     * @type {String}
+     */
+    options.redirectUri = null;
+    this.setredirectUri = function(a) {
+        options.redirectUri = a;
+        return this;
+    };
+    this.getredirectUri = function() {
+        return options.redirectUri;
+    };
+    /**
      * Init Google Plus API
      */
     this.init = function(a) {
@@ -82,21 +95,33 @@ angular.module("googleplus", []).provider("GooglePlus", [ function() {
         var e = function() {};
         e.prototype.login = function() {
             d = a.defer();
-            gapi.auth.authorize({
+            var b = {
                 client_id: options.clientId,
                 scope: options.scopes,
-                response_type: options.responseType,
                 immediate: false
-            }, this.handleAuthResult);
+            };
+            if (options.responseType !== null) {
+                b.response_type = options.responseType;
+            }
+            if (options.redirectUri !== null) {
+                b.redirect_uri = options.redirectUri;
+            }
+            gapi.auth.authorize(b, this.handleAuthResult);
             return d.promise;
         };
         e.prototype.checkAuth = function() {
-            gapi.auth.authorize({
+            var a = {
                 client_id: options.clientId,
                 scope: options.scopes,
-                response_type: options.responseType,
                 immediate: true
-            }, this.handleAuthResult);
+            };
+            if (options.responseType !== null) {
+                a.response_type = options.responseType;
+            }
+            if (options.redirectUri !== null) {
+                a.redirect_uri = options.redirectUri;
+            }
+            gapi.auth.authorize(a, this.handleAuthResult);
         };
         e.prototype.handleClientLoad = function() {
             gapi.client.setApiKey(options.apiKey);
