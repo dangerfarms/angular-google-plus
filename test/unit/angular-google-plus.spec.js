@@ -88,5 +88,14 @@ describe('googlePlus Module specs', function () {
       expect(GooglePlusProvider.getResponseType()).toBe('code');
     });
 
+    it('responseUri as default value', function () {
+      expect(GooglePlusProvider.getRedirectUri()).toBe('');
+    });
+
+    it('working getter / setter for response URI', function () {
+      GooglePlusProvider.setRedirectUri('postmessage');
+      expect(GooglePlusProvider.getRedirectUri()).toBe('postmessage');
+    });
+
   });
 });

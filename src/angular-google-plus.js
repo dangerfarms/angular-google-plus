@@ -78,6 +78,22 @@ angular.module('googleplus', []).
     };
 
     /**
+     * Redirect URI
+     * @default null
+     * @type {String}
+     */
+    options.redirectUri = null;
+
+    this.setredirectUri = function(redirectUri) {
+      options.redirectUri = redirectUri;
+      return this;
+    };
+
+    this.getredirectUri = function() {
+      return options.redirectUri;
+    };
+
+    /**
      * Init Google Plus API
      */
     this.init = function(customOptions) {
@@ -111,6 +127,9 @@ angular.module('googleplus', []).
         if (options.responseType !== null) {
           authorizeOptions.response_type = options.responseType;
         }
+        if (options.redirectUri !== null) {
+          authorizeOptions.redirect_uri = options.redirectUri;
+        }
         gapi.auth.authorize(authorizeOptions, this.handleAuthResult);
         return deferred.promise;
       };
@@ -123,6 +142,9 @@ angular.module('googleplus', []).
         };
         if (options.responseType !== null) {
           authorizeOptions.response_type = options.responseType;
+        }
+        if (options.redirectUri !== null) {
+          authorizeOptions.redirect_uri = options.redirectUri;
         }
         gapi.auth.authorize(authorizeOptions, this.handleAuthResult);
       };
